@@ -9,33 +9,76 @@ class App extends React.Component {
     super(props);
     this.state = {
       searchResults: [{
-        name: 'Come Down To Us',
+        id: 4,
+        name: 'Street Halo',
         artist: 'Burial',
-        album: 'Rival Dealer - EP'
+        album: 'Street Halo',
+        uri: 'asdf'
       }, {
-        name: 'Temple Sleeper',
+        id: 5,
+        name: 'Hiders',
         artist: 'Burial',
-        album: 'Temple Sleeper - Single'
+        album: 'Rival Dealer - EP',
+        uri: 'asdf'
       }, {
-        name: 'Young Death',
+        id: 6,
+        name: 'Southern Comfort',
         artist: 'Burial',
-        album: 'Young Death / Nightmarket - EP'
+        album: 'South London Boroughs - EP',
+        uri: 'asdf'
       }],
-      playlistName: 'Burial\'s New Hotness',
+      playlistName: 'Burial\'s Hotness',
       playlistTracks: [{
+        id: 1,
         name: 'Come Down To Us',
         artist: 'Burial',
-        album: 'Rival Dealer - EP'
+        album: 'Rival Dealer - EP',
+        uri: 'asdf'
       }, {
+        id: 2,
         name: 'Temple Sleeper',
         artist: 'Burial',
-        album: 'Temple Sleeper - Single'
+        album: 'Temple Sleeper - Single',
+        uri: 'asdf'
       }, {
+        id: 3,
         name: 'Young Death',
         artist: 'Burial',
-        album: 'Young Death / Nightmarket - EP'
+        album: 'Young Death / Nightmarket - EP',
+        uri: 'asdf'
       }]
     }
+    // Bind this!
+    this.addTrack = this.addTrack.bind(this);
+    this.removeTrack = this.removeTrack.bind(this);
+    this.updatePlaylistName = this.updatePlaylistName.bind(this);
+    this.savePlaylist = this.savePlaylist.bind(this);
+  }
+  addTrack(track) {
+    let isDuplicate = this.state.playlistTracks.some(playlistTrack => {
+      return playlistTrack.id === track.id;
+    })
+    if (!isDuplicate) {
+      let trackList = this.state.playlistTracks;
+      trackList.push(track);
+      this.setState({playlistTracks: trackList});
+      console.log('Track added.');
+    } else {
+      console.log('Duplicate. Track not added.');
+    }
+  }
+  removeTrack(track) {
+    let trackList = this.state.playlistTracks.filter(playlistTrack => {
+      return playlistTrack.id !== track.id;
+    })
+    this.setState({playlistTracks: trackList});
+  }
+  updatePlaylistName(name) {
+    this.setState({playlistName: name})
+  }
+  savePlaylist() {
+    let trackURIs = this.state.playlistTracks.map(track => track.uri);
+
   }
   render() {
     return(
@@ -44,8 +87,10 @@ class App extends React.Component {
         <div className="App">
           {/* <!-- Add a SearchBar component --> */}
           <div className="App-playlist">
-            <SearchResults searchResults={this.state.searchResults} />
-            <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks} />
+            <SearchResults searchResults={this.state.searchResults} onAdd={this.addTrack}/>
+            <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks}
+            onRemove={this.removeTrack} onNameChange={this.updatePlaylistName}
+            onSave={this.savePlaylist} />
           </div>
         </div>
       </div>
