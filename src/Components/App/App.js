@@ -3,6 +3,7 @@ import './App.css';
 import SearchBar from '../SearchBar/SearchBar';
 import SearchResults from '../SearchResults/SearchResults';
 import Playlist from '../Playlist/Playlist';
+import Spotify from '../../util/Spotify'
 
 class App extends React.Component {
   constructor(props) {
@@ -53,6 +54,9 @@ class App extends React.Component {
     this.removeTrack = this.removeTrack.bind(this);
     this.updatePlaylistName = this.updatePlaylistName.bind(this);
     this.savePlaylist = this.savePlaylist.bind(this);
+    this.search = this.search.bind(this);
+    // Connect spotify
+    Spotify.getAccessToken();
   }
   addTrack(track) {
     let isDuplicate = this.state.playlistTracks.some(playlistTrack => {
@@ -78,16 +82,25 @@ class App extends React.Component {
   }
   savePlaylist() {
     let trackURIs = this.state.playlistTracks.map(track => track.uri);
-
+    // More later
   }
+  search(term) {
+    console.log('Search: '+term);
+    // More later
+    Spotify.search(term).then(results => {
+      console.log('results: '+results)
+      this.setState({searchResults: results});
+    });
+  }
+
   render() {
     return(
       <div>
         <h1>Ja<span className="highlight">mmm</span>ing</h1>
         <div className="App">
-          {/* <!-- Add a SearchBar component --> */}
+          <SearchBar onSearch={this.search} />
           <div className="App-playlist">
-            <SearchResults searchResults={this.state.searchResults} onAdd={this.addTrack}/>
+            <SearchResults searchResults={this.state.searchResults} onAdd={this.addTrack} />
             <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks}
             onRemove={this.removeTrack} onNameChange={this.updatePlaylistName}
             onSave={this.savePlaylist} />
