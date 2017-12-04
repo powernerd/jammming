@@ -8,6 +8,7 @@ class Playlist extends React.Component {
     // Bind this!
     this.handleNameChange = this.handleNameChange.bind(this);
   }
+  // We update the state when the Playlist name changes.
   handleNameChange(event) {
     this.props.onNameChange(event.target.value);
   }

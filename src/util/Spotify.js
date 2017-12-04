@@ -1,33 +1,42 @@
+// The Spotify client ID was obtained over here
+// https://beta.developer.spotify.com/dashboard/applications/1498ac447abd47a1b28fb43f1d33f3d8
 const clientID = '1498ac447abd47a1b28fb43f1d33f3d8';
 const redirectURL = 'http://localhost:3000/';
 let accessToken;
-let expiresIn;
 
 const Spotify = {
   getAccessToken: function() {
+    // This method is used to authenticate the user in the spotify API. It is called
+    // when the Jammming application is initiialized.
+    // If the token is in memory, we don't need to do this again.
     if (accessToken) return accessToken;
-    // check the URL to see if it has just been obtained.
+    // Check the URL to see if it has just been obtained.
     const re_Token = /access_token=([^&]*)/;
     const re_Expires = /expires_in=([^&]*)/;
     let urlToken = window.location.href.match(re_Token);
     let urlExpires = window.location.href.match(re_Expires);
     if (urlToken) {
-      // Set the token and expiration
+      // Set the accessToken variable and expiration
       accessToken = urlToken[1];
-      expiresIn = urlExpires[1];
+      let expiresIn = urlExpires[1];
       window.setTimeout(() => accessToken = '', expiresIn * 1000);
       window.history.pushState('Access Token', null, '/');
     } else {
+      // Navigate to the Spotify page to grant access to our application
       window.location = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURL}`;
     }
   },
   search: function(term) {
+    // Search searches the SPotify library. It is called when clicking the search button
+    // at the top of the Jammming application
+
+    // return a Promise and start getting the search results.
     return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
       headers: { Authorization: `Bearer ${accessToken}` }
     }).then(response => {
       return response.json();
     }).then(jsonResponse => {
-      // map the converted JSON to an array of tracks
+      // map the converted JSON to an array of tracks we can use in Jammming
       return jsonResponse.tracks.items.map(track => {
         return {
             id: track.id,
@@ -47,12 +56,14 @@ const Spotify = {
     // Receive the playlist ID back from the request.
     // POST the track URIs to the newly-created playlist, referencing the current user's
     // account (ID) and the new playlist (ID)
+
+    // If this method is called with no name or tracks, don't do anything.
     if (!name) return;
     if (!tracks) return;
 
-    let _accessToken = accessToken;
+    // Define the headers we'll use in our 3 requests.
     let _headers = {
-      Authorization: `Bearer ${_accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     };
     let _userID;
@@ -64,8 +75,8 @@ const Spotify = {
       return response.json();
     }).then(jsonResponse => {
       _userID = jsonResponse.id;
-        // Make a POST request that creates a new playlist in the user's account
-        // and returns a playlist ID.
+      // Make a POST request that creates a new playlist in the user's account
+      // and returns a playlist ID.
       let data = JSON.stringify({
         name: name,
         public: true,

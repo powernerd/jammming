@@ -8,6 +8,7 @@ import Spotify from '../../util/Spotify'
 class App extends React.Component {
   constructor(props) {
     super(props);
+    // Define the default state
     this.state = {
       searchResults: [],
       playlistName: 'New Playlist',
@@ -19,10 +20,13 @@ class App extends React.Component {
     this.updatePlaylistName = this.updatePlaylistName.bind(this);
     this.savePlaylist = this.savePlaylist.bind(this);
     this.search = this.search.bind(this);
-    // Connect spotify
+    // Connect to spotify
     Spotify.getAccessToken();
   }
+
+  // Method for adding a track to the playlist on the right / below
   addTrack(track) {
+    // Don't let users add a song more than once.
     let isDuplicate = this.state.playlistTracks.some(playlistTrack => {
       return playlistTrack.id === track.id;
     })
@@ -34,17 +38,31 @@ class App extends React.Component {
       console.log('Duplicate. Track not added.');
     }
   }
+
+  // Method for removing a track.
   removeTrack(track) {
+    // Remove the track instance from the playlistTracks array by filtering the ID.
     let trackList = this.state.playlistTracks.filter(playlistTrack => {
       return playlistTrack.id !== track.id;
     })
     this.setState({playlistTracks: trackList});
   }
+  // Method for setting the playlist name
   updatePlaylistName(name) {
     this.setState({playlistName: name})
   }
+  // Method for searching the spotify library. See util/Spotify.js
+  search(term) {
+    // search is Promise based (thenable), set the state when the Promise is fulfilled
+    Spotify.search(term).then(results => {
+      this.setState({searchResults: results});
+    });
+  }
+  // Method for saving the playlist to spotify. See util/Spotify.js
   savePlaylist() {
+    // Get a list of track URIs provided by Spotify, these are needed for defining the playlist
     let tracks = this.state.playlistTracks.map(track => track.uri);
+    // savePlaylist is Promise based. Once the playlist is saved, reset the application state.
     Spotify.savePlaylist(this.state.playlistName, tracks).then(() => {
       //Reset the state when done saving.
       this.setState({
@@ -53,11 +71,6 @@ class App extends React.Component {
       })
       // Set the playlist name to empty.
       document.getElementsByClassName("Playlist-name")[0].value = 'New Playlist';
-    });
-  }
-  search(term) {
-    Spotify.search(term).then(results => {
-      this.setState({searchResults: results});
     });
   }
 
