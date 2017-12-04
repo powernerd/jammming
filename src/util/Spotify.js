@@ -49,13 +49,15 @@ const Spotify = {
     // account (ID) and the new playlist (ID)
     if (!name) return;
     if (!tracks) return;
+
     let _accessToken = accessToken;
     let _headers = {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${_accessToken}`,
       'Content-Type': 'application/json'
     };
     let _userID;
 
+    //GET the users ID for a future request
     return fetch('https://api.spotify.com/v1/me', {
       headers: _headers
     }).then(response => {
@@ -78,23 +80,18 @@ const Spotify = {
         return response.json();
       }).then(jsonResponse => {
         let _playlistID = jsonResponse.id;
+        // Now we can add the tracks
         // Set the URIs parameter to an array of track URIs passed into the method.
         let data = JSON.stringify({
           uris: tracks
         })
-        console.log(data);
         return fetch(`https://api.spotify.com/v1/users/${_userID}/playlists/${_playlistID}/tracks`, {
           headers: _headers,
           method: 'POST',
-          body: JSON.stringify({
-            uris: tracks
-          })
+          body: data
         })
       })
     });
-
-
   }
-
 }
 export default Spotify;

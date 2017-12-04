@@ -9,45 +9,9 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchResults: [{
-        id: 4,
-        name: 'Street Halo',
-        artist: 'Burial',
-        album: 'Street Halo',
-        uri: 'asdf'
-      }, {
-        id: 5,
-        name: 'Hiders',
-        artist: 'Burial',
-        album: 'Rival Dealer - EP',
-        uri: 'asdf'
-      }, {
-        id: 6,
-        name: 'Southern Comfort',
-        artist: 'Burial',
-        album: 'South London Boroughs - EP',
-        uri: 'asdf'
-      }],
-      playlistName: 'Burial\'s Hotness',
-      playlistTracks: [{
-        id: 1,
-        name: 'Come Down To Us',
-        artist: 'Burial',
-        album: 'Rival Dealer - EP',
-        uri: 'asdf'
-      }, {
-        id: 2,
-        name: 'Temple Sleeper',
-        artist: 'Burial',
-        album: 'Temple Sleeper - Single',
-        uri: 'asdf'
-      }, {
-        id: 3,
-        name: 'Young Death',
-        artist: 'Burial',
-        album: 'Young Death / Nightmarket - EP',
-        uri: 'asdf'
-      }]
+      searchResults: [],
+      playlistName: 'New Playlist',
+      playlistTracks: []
     }
     // Bind this!
     this.addTrack = this.addTrack.bind(this);
@@ -66,7 +30,6 @@ class App extends React.Component {
       let trackList = this.state.playlistTracks;
       trackList.push(track);
       this.setState({playlistTracks: trackList});
-      console.log('Track added.');
     } else {
       console.log('Duplicate. Track not added.');
     }
@@ -82,14 +45,18 @@ class App extends React.Component {
   }
   savePlaylist() {
     let tracks = this.state.playlistTracks.map(track => track.uri);
-    Spotify.savePlaylist(this.state.playlistName, tracks);
-    // More later
+    Spotify.savePlaylist(this.state.playlistName, tracks).then(() => {
+      //Reset the state when done saving.
+      this.setState({
+        searchResults: [],
+        playlistTracks: []
+      })
+      // Set the playlist name to empty.
+      document.getElementsByClassName("Playlist-name")[0].value = 'New Playlist';
+    });
   }
   search(term) {
-    console.log('Search: '+term);
-    // More later
     Spotify.search(term).then(results => {
-      console.log('results: '+results)
       this.setState({searchResults: results});
     });
   }
