@@ -1,7 +1,7 @@
 // The Spotify client ID was obtained over here
 // https://beta.developer.spotify.com/dashboard/applications/1498ac447abd47a1b28fb43f1d33f3d8
 const clientID = '1498ac447abd47a1b28fb43f1d33f3d8';
-const redirectURL = 'http://localhost:3000/';
+const redirectURL = 'http://powernerd-jammming.surge.sh/';
 let accessToken;
 
 const Spotify = {
