@@ -26,14 +26,11 @@ class App extends React.Component {
 
   // Method for adding a track to the playlist on the right / below
   addTrack(track) {
+    let tracks = this.state.playlistTracks;
     // Don't let users add a song more than once.
-    let isDuplicate = this.state.playlistTracks.some(playlistTrack => {
-      return playlistTrack.id === track.id;
-    })
-    if (!isDuplicate) {
-      let trackList = this.state.playlistTracks;
-      trackList.push(track);
-      this.setState({playlistTracks: trackList});
+    if (!tracks.includes(track)) {
+      tracks.push(track);
+      this.setState({playlistTracks: tracks});
     } else {
       console.log('Duplicate. Track not added.');
     }
