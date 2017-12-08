@@ -6,6 +6,10 @@ import Playlist from '../Playlist/Playlist';
 import Spotify from '../../util/Spotify'
 
 class App extends React.Component {
+  componentWillMount() {
+    // Connect to spotify
+    Spotify.getAccessToken();
+  }
   constructor(props) {
     super(props);
     // Define the default state
@@ -20,8 +24,6 @@ class App extends React.Component {
     this.updatePlaylistName = this.updatePlaylistName.bind(this);
     this.savePlaylist = this.savePlaylist.bind(this);
     this.search = this.search.bind(this);
-    // Connect to spotify
-    Spotify.getAccessToken();
   }
 
   // Method for adding a track to the playlist on the right / below
